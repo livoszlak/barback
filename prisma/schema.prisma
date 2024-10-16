@@ -21,7 +21,7 @@ model Organization {
     organizationName String
     user User @relation(fields: [userId], references: [id])
     userId Int
-    accessCode String
+    accessCode Int
     greeting String
     seasonals Seasonal[]
 }
