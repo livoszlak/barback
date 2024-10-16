@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect } from "react";
-import { getUserOrgSeasonsal } from "./utils/queries";
+import { getUserOrgSeasonsal } from "../../prisma/queries";
 
 export default function Home() {
   useEffect(() => {
