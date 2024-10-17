@@ -1,12 +1,12 @@
 import { z } from "zod";
 
-export const userSchema = z.object({
+export const managerSchema = z.object({
   name: z.string(),
   email: z.string().email(),
   password: z.string().min(6),
 });
 
-export type User = z.infer<typeof userSchema>;
+export type Manager = z.infer<typeof managerSchema>;
 
 export const organizationSchema = z.object({
   organizationName: z.string(),
@@ -31,13 +31,13 @@ export const classicSchema = z.object({
     method: z.string(),
     glass: z.string(),
     garnish: z.object({
-        ingredients: z.array(
-          z.object({
-            garnishName: z.string(),
-            discard: z.boolean(),
-          })
-        ),
-      }),
+      ingredients: z.array(
+        z.object({
+          garnishName: z.string(),
+          discard: z.boolean(),
+        })
+      ),
+    }),
     tastingNotes: z.array(z.string()),
     info: z.string(),
     imageURL: z.string().url().optional(),
