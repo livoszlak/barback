@@ -1,17 +1,25 @@
-//import { supabase } from "@/lib/supabase";
+"use server";
 import { createClient } from "@/utils/supabase/server";
 
-export async function loginManager(email: string, password: string) {
+export const loginManager = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
   const supabase = createClient();
+
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: password,
+    email,
+    password,
   });
+
   if (error) {
     //console.log(error);
-    return error;
-  } else {
-    //console.log(data);
-    return data;
+    return { failure: error.message };
   }
-}
+  //console.log(data);
+  const { user, session } = data;
+  return { success: { user, session } };
+};

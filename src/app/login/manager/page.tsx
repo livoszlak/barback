@@ -1,32 +1,39 @@
-"use client";
-import { useState } from "react";
-//import { supabase } from "../api/auth/login/route";
-//import { supabase } from "@/lib/supabase";
-import { loginManager } from "@/actions/auth/login";
+// src/app/login/manager/page.tsx
+/* import { useState } from "react";
 import { AuthError } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"; */
+
+import AuthForm from "../client-components/AuthForm";
 
 export default function Manager() {
-  const [email, setEmail] = useState("");
+  /*   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    const response = await loginManager(email, password);
-    if (response instanceof AuthError) {
-      console.log(response);
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const result = await response.json();
+
+    if (response.status !== 200) {
+      console.log(result.error);
       router.push("/");
-      //TODO: error handling
     } else {
-      //console.log(response);
       router.push("/dashboard");
     }
-  };
+  }; */
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <AuthForm />
+      {/*       <form onSubmit={handleSubmit}>
         <input
           type="email"
           placeholder="email"
@@ -40,10 +47,7 @@ export default function Manager() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button type="submit">log in</button>
-      </form>
-      {/* <button type="button" onClick={loginManager}>
-        login
-      </button> */}
+      </form> */}
     </>
   );
 }
