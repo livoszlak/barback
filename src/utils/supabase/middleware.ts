@@ -1,34 +1,33 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { createClient } from "@/utils/supabase/server";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  const supabase = createClient();
+export const createClient = (request: NextRequest) => {
+  console.log("Available cookies:", request.cookies.getAll());
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const response = NextResponse.next();
 
-  // Get the pathname from the request
-  const path = request.nextUrl.pathname;
-
-  // If user is trying to access dashboard without being authenticated
-  if (path.startsWith("/dashboard")) {
-    if (!session) {
-      return NextResponse.redirect(new URL("/", request.url));
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => {
+          const cookies: { name: string; value: string }[] = [];
+          request.cookies.getAll().forEach((cookie) => {
+            cookies.push({ name: cookie.name, value: cookie.value });
+          });
+          return cookies;
+        },
+        setAll: (
+          cookies: { name: string; value: string; options: CookieOptions }[]
+        ) => {
+          cookies.forEach(({ name, value, options }) => {
+            response.cookies.set({ name, value, ...options });
+          });
+        },
+      },
     }
-  }
+  );
 
-  // If user is trying to access login routes while authenticated
-  if (path.startsWith("/login")) {
-    if (session) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
-  }
-
-  return NextResponse.next();
-}
-
-export const config = {
-  matcher: ["/dashboard/:path*", "/login/:path*"],
+  return supabase;
 };
