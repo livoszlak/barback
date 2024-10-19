@@ -1,21 +1,32 @@
-import { redirect } from "next/navigation";
-//import { supabase } from "@/lib/supabase";
-import { createClient } from "@/utils/supabase/client";
+"use client";
 
-export default async function Dashboard() {
-  const supabase = createClient();
-  // const {
-  //   data: { session },
-  // } = await supabase.auth.getSession();
-  const { data, error } = await supabase.auth.getUser();
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
-  console.log(data);
-  console.log(error);
+export default function Dashboard() {
+  const authContext = useContext(AuthContext);
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+  console.log("auth context: ", authContext);
 
-  if (error) {
-    //redirect("/");
-    console.log("uh oh");
+  useEffect(() => {
+    // Only redirect if we're sure there's no user
+    if (authContext !== undefined) {
+      if (!authContext.user) {
+        router.push("/");
+      }
+      setIsLoading(false);
+    }
+  }, [authContext, router]);
+
+  if (isLoading || !authContext?.user) {
+    return <div>Loading...</div>;
   }
 
-  return <>Hej dashboard!</>;
+  return (
+    <div>
+      <h1>Welcome, {authContext.user.email}</h1>
+    </div>
+  );
 }

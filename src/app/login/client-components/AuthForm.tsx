@@ -1,24 +1,29 @@
 "use client";
 
 import { loginManager } from "@/actions/auth/login";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 const AuthForm: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const router = useRouter();
+  const authContext = useContext(AuthContext);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // sign in logic
     const result = await loginManager({ email, password });
     if (result.failure) {
       console.log("Login action failure :", result.failure);
-    }
-    console.log(result);
-    if (result.success) {
+      setMessage(result.failure);
+    } else if (result.success) {
+      console.log(result);
+      authContext?.setSession(result.success.session);
       setMessage("Sign in successful");
+      router.push("/dashboard");
     }
   };
 

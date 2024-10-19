@@ -1,13 +1,23 @@
 "use client";
 import Image from "next/image";
-// import { useEffect } from "react";
-// import { getUserOrgSeasonsal } from "../../prisma/queries";
+import { useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 export default function Home() {
-  // useEffect(() => {
-  //   const data = getUserOrgSeasonsal();
-  //   console.log(data);
-  // }, []);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.getUser();
+
+      if (error) {
+        console.error("Error fetching user data:", error);
+      } else {
+        console.log("User data:", data);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">

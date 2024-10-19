@@ -21,5 +21,6 @@ export const loginManager = async ({
   }
   //console.log(data);
   const { user, session } = data;
+  console.log("session: ", session);
   return { success: { user, session } };
 };
