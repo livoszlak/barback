@@ -1,4 +1,3 @@
-// src/app/login/manager/page.tsx
 /* import { useState } from "react";
 import { AuthError } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation"; */

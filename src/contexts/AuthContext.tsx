@@ -2,25 +2,33 @@
 import { createContext, useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
+import { useContext } from "react";
 
 interface AuthContextType {
   user: User | null;
   isManager: boolean;
   setSession: (session: any) => void;
+  setAuthState: (authState: any) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
 
+export const useAuthContext = () => useContext(AuthContext);
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
   const [isManager, setIsManager] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [authState, setAuthState] = useState(null);
+
+  const resetAuthContext = () => {
+    setAuthState(null);
+  };
 
   useEffect(() => {
-    // First, get the initial session
     const initializeAuth = async () => {
       const {
         data: { session },
@@ -34,7 +42,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initializeAuth();
 
-    // Then subscribe to auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -66,7 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isManager, setSession }}>
+    <AuthContext.Provider value={{ user, isManager, setSession, setAuthState }}>
       {children}
     </AuthContext.Provider>
   );

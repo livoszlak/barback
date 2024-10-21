@@ -7,6 +7,7 @@ export async function middleware(request: NextRequest) {
     console.log("Middleware executing for path:", request.nextUrl.pathname);
 
     const supabase = createClient(request);
+
     const {
       data: { session },
       error,
@@ -29,6 +30,14 @@ export async function middleware(request: NextRequest) {
     }
 
     if (path.startsWith("/login/manager")) {
+      console.log("Checking login access...");
+      if (session) {
+        console.log("Session exists, redirecting to dashboard");
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+    }
+
+    if (path.startsWith("/login/user")) {
       console.log("Checking login access...");
       if (session) {
         console.log("Session exists, redirecting to dashboard");

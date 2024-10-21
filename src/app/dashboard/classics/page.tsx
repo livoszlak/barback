@@ -7,7 +7,7 @@ export default function Classics() {
 
   return (
     <>
-      Hej classics! {authContext?.user?.email} {authContext?.user?.aud}
+      Hej classics! {authContext?.user?.email} is {authContext?.user?.role}
     </>
   );
 }

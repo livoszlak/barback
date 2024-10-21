@@ -11,7 +11,6 @@ export default function Dashboard() {
   console.log("auth context: ", authContext);
 
   useEffect(() => {
-    // Only redirect if we're sure there's no user
     if (authContext !== undefined) {
       if (!authContext.user) {
         router.push("/");
@@ -26,7 +25,9 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h1>Welcome, {authContext.user.email}</h1>
+      <h1>
+        Welcome, {authContext.user.email}, {authContext.user.role} user
+      </h1>
     </div>
   );
 }
