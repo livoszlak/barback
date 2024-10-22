@@ -25,3 +25,12 @@ body {
     text-wrap: balance;
   }
 }
+
+header {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 2rem;
+  padding: 1rem;
+  justify-content: right;
+}
