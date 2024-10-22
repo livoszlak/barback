@@ -1,5 +1,7 @@
 "use server";
 import { createClient } from "@/utils/supabase/server";
+import { OrganizationLogin } from "@/lib/zod";
+import { OrganizationSession, OrganizationUser } from "@/types/types";
 import Jwt from "jsonwebtoken";
 
 export const loginManager = async ({
@@ -26,19 +28,7 @@ export const loginManager = async ({
   return { success: { user, session } };
 };
 
-interface OrganizationUser {
-  organizationId: string;
-  organizationName: string;
-  role: "viewer";
-}
-
-export const loginOrganization = async ({
-  organizationId,
-  accessCode,
-}: {
-  organizationId: string;
-  accessCode: string;
-}) => {
+export const loginOrganization = async (formData: OrganizationLogin) => {
   try {
     const supabase = createClient();
 
@@ -46,14 +36,14 @@ export const loginOrganization = async ({
     const { data: org, error } = await supabase
       .from("organization")
       .select("id, organizationname, accesscode")
-      .eq("id", organizationId)
+      .eq("id", formData.organizationId)
       .single();
 
     if (error || !org) {
       return { failure: "Organization not found" };
     }
 
-    if (org.accesscode.toString() !== accessCode) {
+    if (org.accesscode.toString() !== formData.accessCode) {
       return { failure: "Invalid access code" };
     }
 
@@ -70,12 +60,11 @@ export const loginOrganization = async ({
     });
 
     // Create a session-like object for consistency with AuthContext
-    const orgSession = {
+    const orgSession: OrganizationSession = {
       user: {
-        id: `org_${org.id}`,
+        organizationId: `org_${org.id}`,
         role: "viewer",
         organizationName: org.organizationname,
-        email: null,
       },
       access_token: token,
     };
@@ -90,13 +79,13 @@ export const loginOrganization = async ({
 };
 
 // Helper function to verify token (can be used in middleware or API routes)
-export const verifyOrgToken = (token: string) => {
-  try {
-    console.log("Verifying token:", token);
-    console.log("Using secret:", process.env.SECRET_TOKEN);
-    return Jwt.verify(token, process.env.SECRET_TOKEN!) as OrganizationUser;
-  } catch (error) {
-    console.error("Token verification error:", error);
-    return null;
-  }
-};
+// export const verifyOrgToken = (token: string) => {
+//   try {
+//     console.log("Verifying token:", token);
+//     console.log("Using secret:", process.env.SECRET_TOKEN);
+//     return Jwt.verify(token, process.env.SECRET_TOKEN!) as OrganizationUser;
+//   } catch (error) {
+//     console.error("Token verification error:", error);
+//     return null;
+//   }
+// };

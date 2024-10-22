@@ -1,26 +1,14 @@
 "use client";
 
 import { createContext, useEffect, useState } from "react";
-import { User } from "@supabase/supabase-js";
+import { User, Session } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 import { useContext } from "react";
-
-// TODO: zod for these types, remove email from OrgUser?, et c
-interface OrganizationUser {
-  id: string;
-  role: "viewer";
-  organizationName: string;
-  email: null;
-}
-
-interface AuthContextType {
-  user: User | OrganizationUser | null;
-  isManager: boolean;
-  isViewer: boolean;
-  organizationName?: string;
-  setSession: (session: any) => void;
-  setAuthState: (authState: any) => void;
-}
+import {
+  OrganizationUser,
+  AuthContextType,
+  OrganizationSession,
+} from "@/types/types";
 
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
@@ -83,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, [supabase.auth]);
 
-  const setSession = (session: any) => {
+  const setSession = (session: Session | OrganizationSession) => {
     if (!session) {
       localStorage.removeItem("orgSession");
       setUser(null);
@@ -94,12 +82,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Handle organization viewer session
-    if (session.user.role === "viewer") {
+    if (session.user.role === "viewer" && "access_token" in session) {
       localStorage.setItem("orgSession", JSON.stringify(session));
       setUser(session.user);
       setIsViewer(true);
       setIsManager(false);
-      setOrganizationName(session.user.organizationName);
+      setOrganizationName((session.user as OrganizationUser).organizationName);
     } else {
       // Handle regular Supabase session
       setUser(session.user);
