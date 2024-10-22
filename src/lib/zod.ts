@@ -1,15 +1,15 @@
 import { z } from "zod";
 
 export const managerSchema = z.object({
-  name: z.string(),
-  email: z.string().email(),
-  password: z.string().min(6),
+  name: z.string().trim().min(2),
+  email: z.string().trim().toLowerCase().email(),
+  password: z.string().trim(),
 });
 
 export type Manager = z.infer<typeof managerSchema>;
 
 export const organizationSchema = z.object({
-  organizationName: z.string(),
+  organizationName: z.string().trim().min(3),
   userId: z.number(),
   accessCode: z.number().min(4),
   greeting: z.string(),
@@ -94,3 +94,11 @@ export const prepSchema = z.object({
 });
 
 export type Prep = z.infer<typeof prepSchema>;
+
+//Login Schemas
+export const organizationLoginSchema = z.object({
+  organizationId: z.string(),
+  accessCode: z.string().min(6),
+});
+
+export type OrganizationLogin = z.infer<typeof organizationLoginSchema>;

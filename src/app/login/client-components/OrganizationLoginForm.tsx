@@ -4,11 +4,18 @@ import { useState, useContext } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useOrganization } from "@/contexts/OrganizationContext";
+import { OrganizationLogin, organizationLoginSchema } from "@/lib/zod";
+import { validateFormData } from "@/utils/zod-validation";
+import { OrganlizationLoginErrors } from "@/types/zod-errors";
+import DOMPurify from "dompurify";
 
 const OrganizationLoginForm = () => {
   const { organizations, loginAction } = useOrganization();
-  const [organizationId, setOrganizationId] = useState("");
-  const [accessCode, setAccessCode] = useState("");
+  const [formData, setFormData] = useState<OrganizationLogin>({
+    organizationId: "",
+    accessCode: "",
+  });
+  const [errors, setErrors] = useState<OrganlizationLoginErrors>({});
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,13 +30,30 @@ const OrganizationLoginForm = () => {
     router.push("/dashboard");
   };
 
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: DOMPurify.sanitize(e.target.value), // Update the relevant field based on the input name
+    });
+  };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage("");
 
+    const { errors, data } = validateFormData(
+      organizationLoginSchema,
+      formData
+    );
+    if (errors) {
+      setErrors(errors);
+    } else {
+      setErrors({});
+    }
     try {
-      const result = await loginAction({ organizationId, accessCode });
+      const result = await loginAction(formData);
 
       if (result.failure) {
         setMessage(result.failure);
@@ -58,10 +82,11 @@ const OrganizationLoginForm = () => {
       </label>
       <select
         className="rounded-md px-4 py-2 bg-inherit border mb-6"
+        id="organizationId"
         name="organizationId"
         required
-        value={organizationId}
-        onChange={(e) => setOrganizationId(e.target.value)}
+        value={formData.organizationId}
+        onChange={handleChange}
         disabled={isLoading}
       >
         <option value="">Select Organization</option>
@@ -78,11 +103,14 @@ const OrganizationLoginForm = () => {
       <input
         className="rounded-md px-4 py-2 bg-inherit border mb-6"
         type="password"
+        inputMode="numeric"
+        //TODO: revert to password
+        id="accessCode"
         name="accessCode"
         placeholder="Enter access code"
         required
-        value={accessCode}
-        onChange={(e) => setAccessCode(e.target.value)}
+        value={formData.accessCode}
+        onChange={handleChange}
         disabled={isLoading}
       />
 
