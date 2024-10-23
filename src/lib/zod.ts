@@ -97,7 +97,11 @@ export type Prep = z.infer<typeof prepSchema>;
 
 //Login Schemas
 export const managerLoginSchema = z.object({
-  email: z.string().trim().toLowerCase().email(),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email({ message: "Invalid email format" }),
   password: z.string().trim(),
 });
 
@@ -105,10 +109,7 @@ export type ManagerLogin = z.infer<typeof managerLoginSchema>;
 
 export const organizationLoginSchema = z.object({
   organizationId: z.string(),
-  accessCode: z
-    .string()
-    .min(6, { message: "Too short, buddy." })
-    .max(8, { message: "Too longk, buddy." }),
+  accessCode: z.string(),
 });
 
 export type OrganizationLogin = z.infer<typeof organizationLoginSchema>;

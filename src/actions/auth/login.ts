@@ -31,7 +31,7 @@ export const loginOrganization = async (formData: OrganizationLogin) => {
     // Verify organization and access code
     const { data: org, error } = await supabase
       .from("organization")
-      .select("id, organizationname, accesscode")
+      .select("id, organizationName, accessCode")
       .eq("id", formData.organizationId)
       .single();
 
@@ -39,14 +39,14 @@ export const loginOrganization = async (formData: OrganizationLogin) => {
       return { failure: "Organization not found" };
     }
 
-    if (org.accesscode.toString() !== formData.accessCode) {
+    if (org.accessCode.toString() !== formData.accessCode) {
       return { failure: "Invalid access code" };
     }
 
     // Create payload for JWT
     const payload: OrganizationUser = {
       organizationId: org.id,
-      organizationName: org.organizationname,
+      organizationName: org.organizationName,
       role: "viewer",
     };
 
@@ -60,12 +60,10 @@ export const loginOrganization = async (formData: OrganizationLogin) => {
       user: {
         organizationId: `org_${org.id}`,
         role: "viewer",
-        organizationName: org.organizationname,
+        organizationName: org.organizationName,
       },
       access_token: token,
     };
-
-    console.log(orgSession);
 
     return { success: { session: orgSession } };
   } catch (error) {
