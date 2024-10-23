@@ -6,7 +6,7 @@ export async function getOrganizations() {
 
   const { data, error } = await supabase
     .from("organization")
-    .select("id, organizationname, accesscode")
+    .select("id, organizationName, accessCode")
     .order("id");
 
   if (error) {

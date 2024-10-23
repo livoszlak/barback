@@ -13,11 +13,13 @@ export type OrganizationSession = {
 
 export type OrganizationType = {
   id: string;
-  organizationname: string;
-  accesscode: string;
+  organizationName: string;
+  accessCode: string;
 };
 
-export type OrganizationLoginType = Pick<OrganizationType, "id" | "accesscode">;
+export type OrganizationLoginType = Pick<OrganizationType, "id" | "accessCode">;
+
+export type LoginErrors = string;
 
 export type OrganizationProviderProps = {
   children: React.ReactNode;

@@ -4,31 +4,38 @@ import { loginManager } from "@/actions/auth/login";
 import React, { useState, useContext } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { ManagerLogin } from "@/lib/zod";
+import { ManagerLogin, managerLoginSchema } from "@/lib/zod";
 import DOMPurify from "dompurify";
+import { ManagerLoginErrors } from "@/types/zod-errors";
+import { LoginErrors } from "@/types/types";
+import { validateFormData } from "@/utils/zod-validation";
 
 const AuthForm: React.FC = () => {
-  /*   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState(""); */
   const [formData, setFormData] = useState<ManagerLogin>({
     email: "",
     password: "",
   });
-  const [message, setMessage] = useState("");
+  const [zodErrors, setZodErrors] = useState<ManagerLoginErrors>({});
+  const [loginError, setLoginError] = useState<LoginErrors>("");
   const router = useRouter();
   const authContext = useContext(AuthContext);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const { errors } = validateFormData(managerLoginSchema, formData);
+
+    if (errors) {
+      setZodErrors(errors);
+    } else {
+      setZodErrors({});
+    }
+
     const result = await loginManager(formData);
     if (result.failure) {
-      console.log("Login action failure :", result.failure);
-      setMessage(result.failure);
+      setLoginError(result.failure);
     } else if (result.success) {
-      console.log(result);
       authContext?.setSession(result.success.session);
-      setMessage("Sign in successful");
       router.push("/dashboard");
     }
   };
@@ -71,10 +78,12 @@ const AuthForm: React.FC = () => {
         onChange={handleChange}
       />
 
-      {message && (
-        <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-          {message}
-        </p>
+      {zodErrors.email && (
+        <p className={`mt-4 p-4 text-center rounded`}>{zodErrors.email}</p>
+      )}
+
+      {loginError && (
+        <p className={`mt-4 p-4 text-center rounded`}>{loginError}</p>
       )}
 
       <button

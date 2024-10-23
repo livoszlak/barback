@@ -7,7 +7,7 @@ import { useOrganization } from "@/contexts/OrganizationContext";
 import { OrganizationLogin, organizationLoginSchema } from "@/lib/zod";
 import { validateFormData } from "@/utils/zod-validation";
 import { OrganizationLoginErrors } from "@/types/zod-errors";
-import { OrganizationSession } from "@/types/types";
+import { OrganizationSession, LoginErrors } from "@/types/types";
 import { Session } from "@supabase/supabase-js";
 import DOMPurify from "dompurify";
 
@@ -17,9 +17,9 @@ const OrganizationLoginForm = () => {
     organizationId: "",
     accessCode: "",
   });
-  const [errors, setErrors] = useState<OrganizationLoginErrors>({});
+  const [zodErrors, setZodErrors] = useState<OrganizationLoginErrors>({});
+  const [loginError, setLoginError] = useState<LoginErrors>("");
   const [isLoading, setIsLoading] = useState(false);
-
   const router = useRouter();
   const authContext = useContext(AuthContext);
 
@@ -47,15 +47,15 @@ const OrganizationLoginForm = () => {
     const { errors } = validateFormData(organizationLoginSchema, formData);
 
     if (errors) {
-      setErrors(errors);
+      setZodErrors(errors);
     } else {
-      setErrors({});
+      setZodErrors({});
     }
     try {
       const result = await loginAction(formData);
 
       if (result.failure) {
-        /* setMessage(result.failure); */
+        setLoginError(result.failure);
       } else if (result.success) {
         handleSuccess(result.success.session);
       }
@@ -90,7 +90,7 @@ const OrganizationLoginForm = () => {
         <option value="">Select Organization</option>
         {organizations.map((org) => (
           <option key={org.id} value={org.id}>
-            {org.organizationname}
+            {org.organizationName}
           </option>
         ))}
       </select>
@@ -112,8 +112,12 @@ const OrganizationLoginForm = () => {
         disabled={isLoading}
       />
 
-      {errors.accessCode && (
-        <p className={`mt-4 p-4 text-center rounded`}>{errors.accessCode}</p>
+      {zodErrors.accessCode && (
+        <p className={`mt-4 p-4 text-center rounded`}>{zodErrors.accessCode}</p>
+      )}
+
+      {loginError && (
+        <p className={`mt-4 p-4 text-center rounded`}>{loginError}</p>
       )}
 
       <button
