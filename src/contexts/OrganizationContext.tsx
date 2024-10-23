@@ -1,15 +1,17 @@
 "use client";
 
 import React, { createContext, useContext } from "react";
-import { OrganizationContextType } from "@/types/types";
+import { OrganizationProviderProps } from "@/types/types";
 
-const OrganizationContext = createContext<OrganizationContextType | null>(null);
+const OrganizationContext = createContext<OrganizationProviderProps | null>(
+  null
+);
 
 export function OrganizationProvider({
   children,
   organizations,
   loginAction,
-}: OrganizationContextType) {
+}: OrganizationProviderProps) {
   return (
     <OrganizationContext.Provider
       value={{ children, organizations, loginAction }}

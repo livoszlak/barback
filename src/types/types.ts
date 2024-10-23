@@ -19,13 +19,21 @@ export type OrganizationType = {
 
 export type OrganizationLoginType = Pick<OrganizationType, "id" | "accesscode">;
 
-export type OrganizationContextType = {
+export type OrganizationProviderProps = {
   children: React.ReactNode;
   organizations: OrganizationType[];
   loginAction: (data: {
     organizationId: string;
     accessCode: string;
-  }) => Promise<OrganizationLoginType>;
+  }) => Promise<
+    | { failure: string; success?: undefined }
+    | {
+        success: {
+          session: OrganizationSession;
+        };
+        failure?: undefined;
+      }
+  >;
 };
 
 export type AuthContextType = {
