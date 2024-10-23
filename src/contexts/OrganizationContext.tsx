@@ -1,15 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, ReactNode } from "react";
-import { OrganizationType } from "@/actions/organizations/getOrganizations";
-
-interface OrganizationContextType {
-  organizations: OrganizationType[];
-  loginAction: (data: {
-    organizationId: string;
-    accessCode: string;
-  }) => Promise<any>;
-}
+import React, { createContext, useContext } from "react";
+import { OrganizationContextType } from "@/types/types";
 
 const OrganizationContext = createContext<OrganizationContextType | null>(null);
 
@@ -17,16 +9,11 @@ export function OrganizationProvider({
   children,
   organizations,
   loginAction,
-}: {
-  children: ReactNode;
-  organizations: OrganizationType[];
-  loginAction: (data: {
-    organizationId: string;
-    accessCode: string;
-  }) => Promise<any>;
-}) {
+}: OrganizationContextType) {
   return (
-    <OrganizationContext.Provider value={{ organizations, loginAction }}>
+    <OrganizationContext.Provider
+      value={{ children, organizations, loginAction }}
+    >
       {children}
     </OrganizationContext.Provider>
   );

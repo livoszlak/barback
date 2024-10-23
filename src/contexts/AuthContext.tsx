@@ -25,7 +25,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     string | undefined
   >();
   const [isLoading, setIsLoading] = useState(true);
-  const [authState, setAuthState] = useState(null);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -109,7 +108,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isViewer,
         organizationName,
         setSession,
-        setAuthState,
       }}
     >
       {children}

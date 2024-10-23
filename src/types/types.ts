@@ -11,12 +11,27 @@ export type OrganizationSession = {
   access_token: string;
 };
 
+export type OrganizationType = {
+  id: string;
+  organizationname: string;
+  accesscode: string;
+};
+
+export type OrganizationLoginType = Pick<OrganizationType, "id" | "accesscode">;
+
+export type OrganizationContextType = {
+  children: React.ReactNode;
+  organizations: OrganizationType[];
+  loginAction: (data: {
+    organizationId: string;
+    accessCode: string;
+  }) => Promise<OrganizationLoginType>;
+};
+
 export type AuthContextType = {
   user: User | OrganizationUser | null;
   isManager: boolean;
   isViewer: boolean;
   organizationName?: string;
-  setSession: (session: any) => void;
-  setAuthState: (authState: any) => void;
-}
-
+  setSession: (session: Session | OrganizationSession) => void;
+};

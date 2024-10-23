@@ -1,10 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-
-export interface OrganizationType {
-  id: string;
-  organizationname: string;
-  accesscode: string;
-}
+import { OrganizationType } from "@/types/types";
 
 export async function getOrganizations() {
   const supabase = createClient();
