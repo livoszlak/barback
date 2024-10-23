@@ -1,6 +1,4 @@
-
-
-export  type OrganlizationLoginErrors = {
-    organizationId?: string;
-    accessCode?: string;
-  };
+export type OrganizationLoginErrors = {
+  organizationId?: string;
+  accessCode?: string;
+};

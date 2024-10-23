@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { useOrganization } from "@/contexts/OrganizationContext";
 import { OrganizationLogin, organizationLoginSchema } from "@/lib/zod";
 import { validateFormData } from "@/utils/zod-validation";
-import { OrganlizationLoginErrors } from "@/types/zod-errors";
+import { OrganizationLoginErrors } from "@/types/zod-errors";
+import { OrganizationSession } from "@/types/types";
+import { Session } from "@supabase/supabase-js";
 import DOMPurify from "dompurify";
 
 const OrganizationLoginForm = () => {
@@ -15,14 +17,13 @@ const OrganizationLoginForm = () => {
     organizationId: "",
     accessCode: "",
   });
-  const [errors, setErrors] = useState<OrganlizationLoginErrors>({});
-  const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState<OrganizationLoginErrors>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
   const authContext = useContext(AuthContext);
 
-  const handleSuccess = (session: any) => {
+  const handleSuccess = (session: Session | OrganizationSession) => {
     document.cookie = `org_viewer_token=${
       session.access_token
     }; path=/; max-age=${24 * 60 * 60}`;
@@ -38,15 +39,13 @@ const OrganizationLoginForm = () => {
       [e.target.name]: DOMPurify.sanitize(e.target.value), // Update the relevant field based on the input name
     });
   };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setMessage("");
 
-    const { errors, data } = validateFormData(
-      organizationLoginSchema,
-      formData
-    );
+    const { errors } = validateFormData(organizationLoginSchema, formData);
+
     if (errors) {
       setErrors(errors);
     } else {
@@ -56,13 +55,12 @@ const OrganizationLoginForm = () => {
       const result = await loginAction(formData);
 
       if (result.failure) {
-        setMessage(result.failure);
+        /* setMessage(result.failure); */
       } else if (result.success) {
         handleSuccess(result.success.session);
       }
     } catch (error) {
       console.error("Login error:", error);
-      setMessage("An error occurred during login");
     } finally {
       setIsLoading(false);
     }
@@ -114,16 +112,8 @@ const OrganizationLoginForm = () => {
         disabled={isLoading}
       />
 
-      {message && (
-        <p
-          className={`mt-4 p-4 text-center rounded ${
-            message.includes("error") || message.includes("failed")
-              ? "bg-red-100 text-red-700"
-              : "bg-foreground/10 text-foreground"
-          }`}
-        >
-          {message}
-        </p>
+      {errors.accessCode && (
+        <p className={`mt-4 p-4 text-center rounded`}>{errors.accessCode}</p>
       )}
 
       <button

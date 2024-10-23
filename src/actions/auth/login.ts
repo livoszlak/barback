@@ -1,17 +1,13 @@
 "use server";
 import { createClient } from "@/utils/supabase/server";
-import { OrganizationLogin } from "@/lib/zod";
+import { OrganizationLogin, ManagerLogin } from "@/lib/zod";
 import { OrganizationSession, OrganizationUser } from "@/types/types";
 import Jwt from "jsonwebtoken";
 
-export const loginManager = async ({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}) => {
+export const loginManager = async (formData: ManagerLogin) => {
   const supabase = createClient();
+  const email = formData.email;
+  const password = formData.password;
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
