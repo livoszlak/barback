@@ -1,12 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
-/* import { AuthContext } from "@/contexts/AuthContext"; */
 import { DashboardContext } from "@/contexts/DashboardContext";
 import { Classic } from "@/lib/zod";
 
 export default function DashboardComponent() {
-  /* const authContext = useContext(AuthContext); */
   const dashboardContext = useContext(DashboardContext);
   const [greeting, setGreeting] = useState("");
   const [manager, setManager] = useState("");
@@ -34,7 +32,7 @@ export default function DashboardComponent() {
           <li key={index}>{classic.name}</li>
         ))}
       </ul>
-
+      <div>{dashboardContext.userId}</div>
       <Link href={"/dashboard/classics"}>Go to Classics</Link>
       <Link href={"/dashboard/seasonals"}>Go to Seasonals</Link>
     </>

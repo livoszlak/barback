@@ -31,5 +31,5 @@ export async function getOrganizationsByUserId(userId: string) {
     return { error: "Failed to fetch organizations" };
   }
 
-  return { organizations: data as OrganizationType[] };
+  return { organizations: (data as OrganizationType[]) || error };
 }

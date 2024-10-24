@@ -6,6 +6,7 @@ import { Manager, Classic } from "@/lib/zod";
 import { AuthContext } from "./AuthContext";
 
 type DashboardContextType = {
+  userId?: string;
   user?: User | OrganizationUser;
   organization?: OrganizationType[];
   contextOrgs?: OrganizationType[];
@@ -14,6 +15,7 @@ type DashboardContextType = {
 };
 
 type DashboardProviderProps = {
+  userId: string;
   children: React.ReactNode;
   organizations: OrganizationType[];
   managers: Manager[];
@@ -25,6 +27,7 @@ export const DashboardContext = createContext<DashboardContextType>({});
 export const useDashboardContext = () => useContext(DashboardContext);
 
 export function DashboardProvider({
+  userId,
   children,
   organizations,
   managers,
@@ -43,7 +46,7 @@ export function DashboardProvider({
 
   return (
     <DashboardContext.Provider
-      value={{ contextOrgs, contextManagers, contextClassics }}
+      value={{ userId, contextOrgs, contextManagers, contextClassics }}
     >
       {children}
     </DashboardContext.Provider>
