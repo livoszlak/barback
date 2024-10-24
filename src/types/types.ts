@@ -13,8 +13,10 @@ export type OrganizationSession = {
 
 export type OrganizationType = {
   id: string;
+  userId: string;
   organizationName: string;
   accessCode: string;
+  greeting: string;
 };
 
 export type OrganizationLoginType = Pick<OrganizationType, "id" | "accessCode">;

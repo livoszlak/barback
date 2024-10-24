@@ -3,8 +3,8 @@ import LogoutButton from "./LogoutButton";
 
 export default function Header() {
   return (
-    <header>
+    <nav>
       <LogoutButton />
-    </header>
+    </nav>
   );
 }
