@@ -3,7 +3,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 /* import localFont from "next/font/local"; */
 import { ReactNode } from "react";
 import "./globals.css";
-import Header from "./components/Header";
+import Nav from "./components/Nav";
 
 /* const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body className="antialiased">
         <AuthProvider>
-          <Header />
+          <Nav />
           {children}
         </AuthProvider>
       </body>
