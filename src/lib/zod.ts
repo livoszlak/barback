@@ -1,9 +1,8 @@
 import { z } from "zod";
 
 export const managerSchema = z.object({
-  name: z.string().trim().min(2),
-  email: z.string().trim().toLowerCase().email(),
-  password: z.string().trim(),
+  name: z.string(),
+  id: z.string(),
 });
 
 export type Manager = z.infer<typeof managerSchema>;
